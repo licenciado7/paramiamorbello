@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Te Amo 💗</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,500;1,600&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{--rosa:#ff2d8f;--rosa-suave:#ff8fc4;--oro:#e8c46a;--fondo:#05010a;--serif:'Cormorant Garamond',Georgia,serif;--sans:'Quicksand',system-ui,sans-serif}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:var(--fondo);overflow:hidden;overscroll-behavior:none;touch-action:none;user-select:none;-webkit-user-select:none}
+canvas{position:fixed;inset:0;width:100%;height:100%;display:block}
+#titulo{position:fixed;top:calc(env(safe-area-inset-top,0px) + 18px);left:0;right:0;text-align:center;font:italic 600 26px var(--serif);color:#fff;letter-spacing:.02em;text-shadow:0 0 14px rgba(255,45,143,.7);opacity:0;transition:opacity 1.6s;pointer-events:none;z-index:3}
+body.dentro #titulo{opacity:1}
+#intro{position:fixed;inset:0;z-index:10;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;cursor:pointer;padding:20px}
+#intro::before{content:"";position:absolute;inset:0;z-index:-1;background:radial-gradient(circle at 50% 45%,#2a0620 0,#0a0212 55%,#05010a 100%);transition:opacity .6s}
+#intro.abre{pointer-events:none}#intro.abre::before{opacity:0}#intro.fuera{visibility:hidden}
+.cuadro{position:relative;width:min(88vw,390px);padding:38px 24px 32px;border:1px solid rgba(255,130,195,.75);border-radius:20px;background:rgba(18,4,26,.78);box-shadow:0 0 30px rgba(255,45,143,.4),inset 0 0 28px rgba(255,45,143,.14);overflow:hidden;text-align:center;transition:opacity .5s,transform .5s}
+#intro.abre .cuadro{opacity:0;transform:scale(.95)}
+#cp{position:absolute;inset:0;width:100%;height:100%}
+.txt{position:relative;z-index:1}
+.mini{width:42px;height:42px;margin-bottom:10px;filter:drop-shadow(0 0 12px rgba(255,45,143,.9));animation:latido 1.6s ease-in-out infinite}
+.l{opacity:0;margin:0 0 .45em;font:italic 500 21px/1.35 var(--serif);color:#fff;text-shadow:0 0 8px rgba(255,170,220,.95),0 0 20px rgba(255,45,143,.65);animation:aparece 1s ease forwards}
+h1.l{font:italic 600 34px/1.15 var(--serif);margin:.55em 0 .35em;text-shadow:0 0 10px #fff,0 0 24px rgba(255,120,190,1),0 0 42px rgba(255,45,143,.8)}
+.l1{animation-delay:.5s}.l2{animation-delay:1.9s}.l3{animation-delay:3.3s}.l4{animation-delay:5s}.l5{animation-delay:6.6s;font-size:25px}
+#toca{margin:0;font:500 13px var(--sans);color:#f3dfe9;opacity:0;animation:aparece 1s ease 6s forwards}
+#intro.abre #toca{animation:none;opacity:0}
+@keyframes aparece{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes latido{0%,100%{transform:scale(1)}15%{transform:scale(1.14)}30%{transform:scale(1)}45%{transform:scale(1.08)}}
+#musicaBtn{position:fixed;top:calc(env(safe-area-inset-top,0px) + 14px);right:14px;z-index:5;width:40px;height:40px;border-radius:50%;border:1px solid rgba(255,130,195,.7);background:rgba(18,4,26,.6);color:#fff;font-size:18px;display:none;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 0 14px rgba(255,45,143,.35);touch-action:manipulation}
+body.dentro #musicaBtn{display:flex}#musicaBtn[hidden]{display:none!important}
+#musicaBtn:focus-visible{outline:2px solid var(--rosa-suave);outline-offset:2px}
+#flash{position:fixed;inset:0;z-index:9;pointer-events:none;opacity:0;background:radial-gradient(circle,rgba(255,235,248,.85),rgba(255,60,150,.5) 55%,rgba(255,45,143,0) 85%)}
+#carta{position:fixed;left:50%;top:50%;width:min(86vw,380px);transform:translate(-50%,-48%) scale(.96);padding:22px 22px 18px;border:1px solid rgba(255,45,143,.65);border-radius:14px;background:rgba(14,3,16,.9);box-shadow:0 0 28px rgba(255,45,143,.35),inset 0 0 22px rgba(255,45,143,.12);opacity:0;visibility:hidden;transition:opacity .7s,transform .7s,visibility .7s;z-index:6;touch-action:auto;max-height:82vh;overflow-y:auto}
+#carta.abierta{opacity:1;visibility:visible;transform:translate(-50%,-50%) scale(1)}
+#carta h2{margin:0 0 12px;font:italic 600 24px var(--serif);color:var(--rosa)}
+#carta p{margin:0 0 12px;font:500 13px/1.7 var(--sans);color:#f6eef3}
+#carta .firma{margin:6px 0 0;text-align:right;font:italic 500 16px var(--serif);color:var(--oro)}
+#cerrar{position:absolute;top:8px;right:12px;background:none;border:0;color:#d9b9cb;font-size:20px;line-height:1;padding:6px;cursor:pointer}
+#cerrar:focus-visible{outline:2px solid var(--rosa-suave);border-radius:6px}
+#pista{position:fixed;bottom:calc(env(safe-area-inset-bottom,0px) + 22px);left:0;right:0;text-align:center;font:500 12px var(--sans);color:#e9cfe0;opacity:0;transition:opacity 1.2s;pointer-events:none;z-index:3}
+#pista.ver{opacity:.8}
+#mano{position:fixed;left:0;top:0;font-size:20px;pointer-events:none;z-index:20;filter:grayscale(1) brightness(2.2) drop-shadow(0 0 4px #000);transform:translate(-50%,-50%);opacity:0;transition:opacity .4s}
+#mano.ver{opacity:1}
+@media (prefers-reduced-motion:reduce){.mini{animation:none}.l,#toca{animation:none;opacity:1}}
+</style>
+</head>
+<body>
+<div id="titulo">Te Amo 💗</div>
+<div id="flash"></div>
+<button id="musicaBtn" aria-label="Silenciar música" aria-pressed="false">🔊</button>
+<div id="intro" role="button" tabindex="0" aria-label="Continuar">
+  <div class="cuadro" id="cuadro"><canvas id="cp"></canvas>
+    <div class="txt">
+      <svg class="mini" viewBox="0 0 100 90" aria-hidden="true"><defs><radialGradient id="g" cx="40%" cy="35%" r="70%"><stop offset="0" stop-color="#ff9ccb"/><stop offset=".55" stop-color="#ff2d8f"/><stop offset="1" stop-color="#b3125f"/></radialGradient></defs><path d="M50 84C14 56 4 38 4 25 4 12 14 4 26 4c9 0 18 5 24 14C56 9 65 4 74 4c12 0 22 8 22 21 0 13-10 31-46 59z" fill="url(#g)"/></svg>
+      <p class="l l1">Tal vez no es mucho,</p>
+      <p class="l l2">pero esto es en lo que soy mejor,</p>
+      <p class="l l3">y espero que te guste este bonito detalle.</p>
+      <h1 class="l l4">Feliz cumple un mes,<br>mi amor</h1>
+      <p class="l l5">Te amo 💗</p>
+    </div>
+  </div>
+  <p id="toca">Toca para continuar</p>
+</div>
+<div id="carta" role="dialog" aria-live="polite"><button id="cerrar" aria-label="Cerrar carta">×</button><h2>Mi amor,</h2><div id="cuerpo"></div><p class="firma" id="firma"></p></div>
+<div id="pista">Arrastra para girar · pellizca para acercar · toca el corazón y los planetas</div>
+<div id="mano">✋</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+/* ====== PERSONALIZA AQUÍ ====== */
+const MUSICA = "musica.mp3"; // pon tu canción junto al index.html con este nombre (déjalo "" para no usar música)
+const FRASES = ["Mi universo eres tú","Eres mi refugio","Eres mi hogar","Contigo por siempre","Mi gravedad eres tú","Mi mayor suerte","Eres mi paz","Mi persona favorita","Siempre a tu lado","Eres mi estrella","Girando juntos","Mi órbita eres tú","Mi lugar seguro","Eres mi razón","Te elijo siempre","Mi todo","Un mes contigo","Feliz primer mes","Un mes y quiero mil más","Un mes de ti, mi lugar favorito","Gracias por este mes","Lo mejor de mi mes eres tú","Apenas empezamos, mi amor","Estoy aprendiendo a amarte","Gracias por tu paciencia","Cada día te quiero más","Contigo todo es nuevo y bonito"];
+const FRASES_PLANETAS = [ // un mensaje por planeta, del sol hacia afuera (se abre al tocarlo)
+ {p:["Hoy cumplimos un mes, y ya eres mi parte favorita del día.","Cada mensaje, cada risa y cada rato contigo me recuerdan lo bonito que es empezar algo así."],f:"Feliz primer mes."},
+ {p:["Te amo mucho, más de lo que sé decir.","Esto es nuevo para mí, y aunque a veces me falten las palabras, lo que siento es verdadero."],f:"Con todo mi cariño."},
+ {p:["Sé que he tenido fallas, y que no siempre te he demostrado todo lo que siento.","No es falta de amor: estoy aprendiendo, y quiero hacerlo bien contigo."],f:"Perdón y gracias."},
+ {p:["Estoy aprendiendo a amarte, poco a poco y cada día mejor.","Me estoy acostumbrando a tenerte cerca, y cada día me gusta más."],f:"Aprendiendo contigo."},
+ {p:["Amarte es nuevo y me está cambiando, para bien.","Me estoy acostumbrando a lo bonito de ti, y no quiero dejar de hacerlo."],f:"Contigo, siempre."},
+ {p:["Gracias por tu paciencia conmigo en este primer mes.","Prometo esforzarme más cada día, con más detalles, más tiempo y más palabras bonitas."],f:"Lo prometo."},
+ {p:["Un mes contigo y ya quiero muchos más.","Eres mi lugar favorito del universo, y aquí es donde quiero quedarme."],f:"Para siempre, mi amor."}
+];
+const COLORES = ["#ff9ccb","#8aa2ff","#f4c95d","#ffb36b","#c9a2ff","#ff6fae"];
+const SPRITES_EMOJI = ["🎀","🕷️","🌸","💖","⭐","🧸"];
+const SPRITES_IMAGEN = []; // opcional: ["fotos/kitty.png","fotos/arana.png"] (PNG con fondo transparente)
+const CARTAS = [
+ {p:["Hoy cumplimos un mes y siento que el tiempo se volvió más suave desde que llegaste. Un mes de risas, de mensajes que me hacen sonreír sin darme cuenta y de ganas de verte.","Si así se siente el principio, no quiero imaginar todo lo que viene. Gracias por quedarte, por cuidarme y por ser tan tú."],f:"Feliz primer mes, mi amor."},
+ {p:["Cada cosa importante cae hacia lo que ama, y yo aprendí a caer hacia ti sin miedo a estrellarme. Tu gravedad es la única que me sostiene los días en que todo pesa.","Podemos girar despacio el resto de la vida, tú y yo, alrededor de esta misma luz. No necesito otro universo si en este me toca orbitarte a ti."],f:"Siempre tuyo."},
+ {p:["Antes de ti mi cielo era un mapa sin nombres, puntos de luz sueltos que no llevaban a ningún lado. Llegaste y le pusiste sentido a cada estrella.","Nuestra órbita no es perfecta ni simétrica, y por eso me gusta tanto volver a ella. Te elijo con la calma con la que los planetas eligen su ruta."],f:"Contigo, aquí."},
+ {p:["Sé que he tenido fallas y que a veces no te he demostrado todo lo que siento. No es falta de amor: es que esto es nuevo para mí, y estoy aprendiendo a amarte, a decírtelo y a cuidarlo bien.","Cada día me acostumbro más a tenerte, y cada día me gusta más. Gracias por tu paciencia en este primer mes. Prometo seguir aprendiendo, con más detalles, más tiempo y más palabras bonitas para ti."],f:"Aprendiendo a amarte."},
+ {p:["Un mes es poco tiempo para el universo, pero para mí ya es una órbita entera: la de volver a ti cada día.","Quiero más conversaciones largas, más abrazos sin prisa y más meses a tu lado. Mientras tanto, esta galaxia es mía para decírtelo: te quiero."],f:"Un mes y lo que sigue."},
+ {p:["Fuimos dos cometas que se cruzaron por azar, y decidimos convertir ese cruce en un camino que se parece a un hogar.","Prometo cuidarte con la paciencia con la que la noche cuida sus estrellas: sin apuro, sin ruido, sin apagarme nunca."],f:"Tuyo, siempre."}
+];
+/* ================================ */
+const $=id=>document.getElementById(id);
+const reducido=matchMedia('(prefers-reduced-motion:reduce)').matches;
+const R=Math.random, gauss=()=>(R()+R()+R()+R()-2)/2;
+
+function arrancar(){
+const renderer=new THREE.WebGLRenderer({antialias:false,alpha:false,powerPreference:'high-performance'});
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+renderer.setClearColor(0x05010a,1);
+document.body.prepend(renderer.domElement);
+const scene=new THREE.Scene();
+const cam=new THREE.PerspectiveCamera(60,1,.1,600);
+
+function discoTex(){const c=document.createElement('canvas');c.width=c.height=64;const x=c.getContext('2d');const g=x.createRadialGradient(32,32,0,32,32,32);g.addColorStop(0,'rgba(255,255,255,1)');g.addColorStop(.25,'rgba(255,255,255,.85)');g.addColorStop(1,'rgba(255,255,255,0)');x.fillStyle=g;x.fillRect(0,0,64,64);return new THREE.CanvasTexture(c)}
+const disco=discoTex();
+function puntos(pos,col,size,atten=true){
+  const g=new THREE.BufferGeometry();
+  g.setAttribute('position',new THREE.BufferAttribute(pos,3));
+  g.setAttribute('color',new THREE.BufferAttribute(col,3));
+  return new THREE.Points(g,new THREE.PointsMaterial({size,map:disco,vertexColors:true,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,sizeAttenuation:atten}));
+}
+
+/* estrellas de fondo */
+{const n=3800,p=new Float32Array(n*3),c=new Float32Array(n*3);
+ for(let i=0;i<n;i++){const u=R()*2-1,a=R()*6.283,s=Math.sqrt(1-u*u),r=250;p.set([r*s*Math.cos(a),r*u,r*s*Math.sin(a)],i*3);const b=.5+R()*.5;c.set([b,b*.9,b],i*3)}
+ scene.add(puntos(p,c,1.8,false))}
+
+/* galaxia espiral */
+const galaxia=new THREE.Group();scene.add(galaxia);
+{const n=48000,p=new Float32Array(n*3),c=new Float32Array(n*3),RAD=52;
+ for(let i=0;i<n;i++){
+  const r=Math.pow(R(),.72)*RAD+1.5, brazo=i%2, giro=r*.17;
+  const ang=brazo*Math.PI+giro+gauss()*(.55-r/RAD*.3);
+  const rr=r+gauss()*(.6+r*.04);
+  p.set([Math.cos(ang)*rr,gauss()*(.12+r*.012),Math.sin(ang)*rr],i*3);
+  const t=Math.min(1,r/RAD), m=R();
+  c.set([1,.82-t*.35+m*.15,.93-t*.15],i*3);
+ }
+ galaxia.add(puntos(p,c,.22))}
+{const n=1400,p=new Float32Array(n*3),c=new Float32Array(n*3); /* bokeh grande */
+ for(let i=0;i<n;i++){const r=Math.pow(R(),.8)*46+2,ang=(i%2)*Math.PI+r*.17+gauss()*.5;p.set([Math.cos(ang)*r,gauss()*.5,Math.sin(ang)*r],i*3);c.set([1,.6+R()*.3,.85],i*3)}
+ galaxia.add(puntos(p,c,.9))}
+
+/* corazón neón + pilar */
+const corazon=new THREE.Group();corazon.position.y=3.2;scene.add(corazon);
+{/* corazón 3D relleno: superficie de una ecuación implícita, muestreada en una fina cáscara */
+ const n=7000,p=new Float32Array(n*3),c=new Float32Array(n*3),S=2.1;let k=0;
+ while(k<n){
+  const x=(R()*2-1)*1.25,y=(R()*2-1)*.95,z=(R()*2-1)*1.25;
+  const q=x*x+2.25*y*y+z*z-1,f=q*q*q-x*x*z*z*z-.1125*y*y*z*z*z;
+  if(f>0||f<-.035)continue;
+  p.set([x*S,z*S,y*S*1.05],k*3);
+  const h=(z+1.1)/2.4,w=R();
+  c.set([1,.1+h*.3+w*.15,.42+h*.3],k*3);k++}
+ corazon.add(puntos(p,c,.17))}
+const luz=new THREE.Sprite(new THREE.SpriteMaterial({map:disco,color:0xff2d8f,transparent:true,opacity:.35,blending:THREE.AdditiveBlending,depthWrite:false}));
+luz.scale.set(11,11,1);corazon.add(luz);
+{const c=document.createElement('canvas');c.width=640;c.height=160;const x=c.getContext('2d');
+ x.font='italic 600 64px "Cormorant Garamond",Georgia,serif';x.textAlign='center';x.textBaseline='middle';
+ x.shadowColor='#ff2d8f';x.shadowBlur=18;x.fillStyle='#fff';x.fillText('Feliz 1 mes, mi amor',320,80);
+ const t=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(c),transparent:true,depthWrite:false}));
+ t.scale.set(8,2,1);t.position.y=3.9;corazon.add(t)}
+
+/* etiquetas de texto y sprites que orbitan */
+function spriteTexto(txt,col){
+  const c=document.createElement('canvas');c.width=512;c.height=128;const x=c.getContext('2d');
+  x.textAlign='center';x.textBaseline='middle';x.shadowColor=col;x.shadowBlur=14;x.fillStyle=col;
+  let ls=[txt];
+  if(txt.length>19){const m=txt.length/2;let b=-1;for(let i=0;i<txt.length;i++)if(txt[i]===' '&&(b<0||Math.abs(i-m)<Math.abs(b-m)))b=i;if(b>0)ls=[txt.slice(0,b),txt.slice(b+1)]}
+  let fs=ls.length>1?44:52;x.font='700 '+fs+'px Quicksand, sans-serif';
+  const w=Math.max(...ls.map(l=>x.measureText(l).width));
+  if(w>490){fs=Math.floor(fs*490/w);x.font='700 '+fs+'px Quicksand, sans-serif'}
+  ls.forEach((l,i)=>x.fillText(l,256,ls.length>1?(i?92:38):64));
+  const s=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(c),transparent:true,depthWrite:false}));
+  s.scale.set(5.2,1.3,1);return s}
+function spriteEmoji(e){
+  const c=document.createElement('canvas');c.width=c.height=128;const x=c.getContext('2d');
+  x.font='92px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif';x.textAlign='center';x.textBaseline='middle';x.fillText(e,64,70);
+  const s=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(c),transparent:true,depthWrite:false}));
+  s.scale.set(1.7,1.7,1);return s}
+function colocar(s,r){const ang=R()*6.283;s.position.set(Math.cos(ang)*r,.5+R()*2.2,Math.sin(ang)*r);galaxia.add(s)}
+FRASES.forEach((f,i)=>colocar(spriteTexto(f,COLORES[i%COLORES.length]),7+R()*34));
+const loader=new THREE.TextureLoader();
+for(let i=0;i<22;i++){
+  let s;
+  if(SPRITES_IMAGEN.length){s=new THREE.Sprite(new THREE.SpriteMaterial({map:loader.load(SPRITES_IMAGEN[i%SPRITES_IMAGEN.length]),transparent:true,depthWrite:false}));s.scale.set(2,2,1)}
+  else s=spriteEmoji(SPRITES_EMOJI[i%SPRITES_EMOJI.length]);
+  colocar(s,6+R()*38)}
+
+/* sistema solar 3D sobre la galaxia (mismo radio, mismos colores) */
+const sistema=new THREE.Group();sistema.position.y=22;sistema.rotation.x=.14;scene.add(sistema);
+const orbitas=[],giros=[],planetas=[];
+function anillo(n,r0,r1,hex,alt,tam,br=1){
+  const p=new Float32Array(n*3),c=new Float32Array(n*3),col=new THREE.Color(hex);
+  for(let i=0;i<n;i++){const r=r0+R()*(r1-r0),a=R()*6.283,k=(.6+R()*.4)*br;p.set([Math.cos(a)*r,gauss()*alt,Math.sin(a)*r],i*3);c.set([col.r*k,col.g*k,col.b*k],i*3)}
+  return puntos(p,c,tam)}
+function esfera(n,r,c1,c2){
+  const p=new Float32Array(n*3),c=new Float32Array(n*3),a=new THREE.Color(c1),b=new THREE.Color(c2),m=new THREE.Color();
+  for(let i=0;i<n;i++){const u=R()*2-1,f=R()*6.283,s=Math.sqrt(1-u*u),rr=r*(.86+R()*.14);p.set([rr*s*Math.cos(f),rr*u,rr*s*Math.sin(f)],i*3);m.copy(a).lerp(b,R());c.set([m.r,m.g,m.b],i*3)}
+  return puntos(p,c,r*.09+.08)}
+function halo(col,tam,op){const h=new THREE.Sprite(new THREE.SpriteMaterial({map:disco,color:col,transparent:true,opacity:op,blending:THREE.AdditiveBlending,depthWrite:false}));h.scale.set(tam,tam,1);return h}
+/* sol en el centro */
+{const sol=esfera(4200,2.7,'#fff3d1','#ff5fa8');sistema.add(sol);giros.push([sol,.3]);
+ sistema.add(anillo(3000,3.2,7.5,'#ff9ccb',1.2,.16));
+ sistema.add(halo(0xff5fa8,15,.55),halo(0xffc36b,30,.16));
+ const t=spriteTexto('Tú eres mi sol','#f4c95d');t.position.y=6.4;t.scale.set(7,1.75,1);sistema.add(t)}
+/* polvo del disco y cinturón de asteroides */
+sistema.add(anillo(22000,3,52,'#ffb3dc',.35,.13,.6));
+sistema.add(anillo(7000,29,35,'#e8c9ff',.5,.12));
+/* planetas */
+[[8,.7,'#ffd0e6','#ff7ab8',.5],[13,1,'#ff9ccb','#c0368a',.38],[19,1.15,'#c9a2ff','#7a5cff',.3],[25,.85,'#ffb36b','#ff5f9e',.24],
+ [39,1.7,'#ffe3a3','#ff8fc4',.15],[45,1.3,'#8aa2ff','#d98cff',.12],[50,.9,'#ff6fae','#ffe0f0',.1]].forEach(([r,tam,c1,c2,v],i)=>{
+  sistema.add(anillo(900,r-.07,r+.07,'#ff7ac0',.02,.09,.55));
+  const pivote=new THREE.Group(),nodo=new THREE.Group();nodo.position.x=r;pivote.add(nodo);pivote.rotation.y=R()*6.283;
+  const bola=esfera(Math.round(500+tam*500),tam,c1,c2);nodo.add(bola);giros.push([bola,.6]);
+  nodo.add(halo(new THREE.Color(c2),tam*5,.22));
+  planetas.push({nodo,tam,i});
+  if(i===4){const an=anillo(3000,tam*1.5,tam*2.4,'#ffd1ea',.03,.1);an.rotation.x=.45;nodo.add(an)}
+  if(i===2){const lp=new THREE.Group(),luna=esfera(160,.28,'#ffffff','#ffd0e6');luna.position.x=2.3;lp.add(luna);nodo.add(lp);orbitas.push([lp,1.4])}
+  sistema.add(pivote);orbitas.push([pivote,v])});
+
+/* lluvia de partículas rosas cayendo por el espacio */
+const LL=7000,LLtop=50,LLbot=-16;
+const llP=new Float32Array(LL*3),llC=new Float32Array(LL*3),llV=new Float32Array(LL),llF=new Float32Array(LL);
+for(let i=0;i<LL;i++){
+  const a=R()*6.283,r=Math.sqrt(R())*75;
+  llP.set([Math.cos(a)*r,LLbot+R()*(LLtop-LLbot),Math.sin(a)*r],i*3);
+  llV[i]=2.5+R()*6;llF[i]=R()*6.283;
+  const k=.55+R()*.45,m=R();llC.set([1*k,(.25+m*.5)*k,(.6+m*.35)*k],i*3)}
+const lluvia=puntos(llP,llC,.2);lluvia.frustumCulled=false;scene.add(lluvia);
+
+/* piedras espaciales: dan la sensación de que la galaxia y el sistema solar viajan */
+scene.add(new THREE.AmbientLight(0xb77aa8,.75));
+const luzDir=new THREE.DirectionalLight(0xffc7e8,1.2);luzDir.position.set(30,45,25);scene.add(luzDir);
+const NR=171,NT=12,dirViaje=new THREE.Vector3(-.12,-.04,1).normalize();
+function geoRoca(seed){
+  const g=new THREE.IcosahedronGeometry(1,1),p=g.attributes.position,m={};
+  for(let i=0;i<p.count;i++){const x=p.getX(i),y=p.getY(i),z=p.getZ(i),k=x.toFixed(3)+','+y.toFixed(3)+','+z.toFixed(3);
+    if(!(k in m))m[k]=.68+R()*.55;const f=m[k];p.setXYZ(i,x*f*(1+.18*seed),y*f*(1-.12*seed),z*f)}
+  return g}
+const matRoca=new THREE.MeshStandardMaterial({color:0xffffff,roughness:.92,metalness:.05,flatShading:true,emissive:0x2b0b22,emissiveIntensity:.8});
+const paleta=['#b58aa8','#8f77a8','#d6a0bd','#7a6a90','#c78aa0'].map(c=>new THREE.Color(c));
+const rocas=[],mallas=[];
+[-.6,0,.7].forEach(seed=>{
+  const n=NR/3,mesh=new THREE.InstancedMesh(geoRoca(seed),matRoca,n);mesh.frustumCulled=false;
+  for(let i=0;i<n;i++){
+    const grande=R()<.06;
+    rocas.push({mesh,i,pos:new THREE.Vector3((R()*2-1)*115,-25+R()*90,(R()*2-1)*130),esc:grande?3+R()*3:.4+Math.pow(R(),2)*2,v:6+R()*9,
+      rot:new THREE.Euler(R()*6,R()*6,R()*6),rv:new THREE.Vector3(R()-.5,R()-.5,R()-.5).multiplyScalar(1.2)});
+    mesh.setColorAt(i,paleta[Math.floor(R()*paleta.length)])}
+  scene.add(mesh);mallas.push(mesh)});
+const tP=new Float32Array(NR*NT*3),tC=new Float32Array(NR*NT*3);
+for(let k=0;k<NR;k++)for(let j=0;j<NT;j++){const f=1-j/NT;tC.set([f,.45*f,.75*f],(k*NT+j)*3)}
+const estela=puntos(tP,tC,.17);estela.frustumCulled=false;scene.add(estela);
+const dm=new THREE.Object3D();
+function moverRocas(dt){
+  for(let k=0;k<NR;k++){const r=rocas[k];
+    r.pos.addScaledVector(dirViaje,r.v*dt);
+    if(r.pos.z>135)r.pos.set((R()*2-1)*115,-25+R()*90,-135);
+    r.rot.x+=r.rv.x*dt;r.rot.y+=r.rv.y*dt;r.rot.z+=r.rv.z*dt;
+    dm.position.copy(r.pos);dm.rotation.copy(r.rot);dm.scale.setScalar(r.esc);dm.updateMatrix();
+    r.mesh.setMatrixAt(r.i,dm.matrix);
+    for(let j=0;j<NT;j++){const o=(k*NT+j)*3,d=(j+1)*(r.esc*.5+r.v*.09);
+      tP[o]=r.pos.x-dirViaje.x*d+Math.sin(j*7+k)*.14*r.esc;tP[o+1]=r.pos.y-dirViaje.y*d+Math.cos(j*5+k)*.14*r.esc;tP[o+2]=r.pos.z-dirViaje.z*d}}
+  mallas.forEach(m=>m.instanceMatrix.needsUpdate=true);
+  estela.geometry.attributes.position.needsUpdate=true}
+moverRocas(0);
+
+/* cámara orbital */
+let th=.45,ph=1.3,rad=27;           // ángulo horizontal, ángulo desde el cenit, distancia
+let tTh=th,tPh=ph,tRad=rad;
+let ultimo=0,entro=0,vel=0,bloqueado=false,miraY=9,miraObj=9,pulso=0,tiembla=0;
+const lim=(v,a,b)=>Math.max(a,Math.min(b,v));
+function tocar(){ultimo=performance.now()}
+
+const ptrs=new Map();let pinch0=0,rad0=0,mov=0,t0=0;
+const cv=renderer.domElement,mano=$('mano');
+cv.addEventListener('pointerdown',e=>{if(bloqueado)return;cv.setPointerCapture(e.pointerId);ptrs.set(e.pointerId,[e.clientX,e.clientY]);tocar();
+  if(ptrs.size===1){mov=0;t0=performance.now()}
+  if(ptrs.size===2){const [a,b]=[...ptrs.values()];pinch0=Math.hypot(a[0]-b[0],a[1]-b[1]);rad0=tRad}});
+cv.addEventListener('pointermove',e=>{
+  mano.style.left=e.clientX+'px';mano.style.top=e.clientY+'px';mano.classList.add('ver');
+  if(!ptrs.has(e.pointerId))return;
+  const p=ptrs.get(e.pointerId);const dx=e.clientX-p[0],dy=e.clientY-p[1];ptrs.set(e.pointerId,[e.clientX,e.clientY]);tocar();
+  if(ptrs.size===1){mov+=Math.abs(dx)+Math.abs(dy);tTh-=dx*.007;tPh=lim(tPh-dy*.005,.12,1.6);vel=-dx*.007}
+  else if(ptrs.size===2){const [a,b]=[...ptrs.values()];const d=Math.hypot(a[0]-b[0],a[1]-b[1]);tRad=lim(rad0*pinch0/d,4,95)}});
+const fin=e=>{
+  if(ptrs.size===1&&mov<8&&performance.now()-t0<450)tap(e.clientX,e.clientY);
+  ptrs.delete(e.pointerId);if(!ptrs.size)setTimeout(()=>mano.classList.remove('ver'),1500)};
+cv.addEventListener('pointerup',fin);cv.addEventListener('pointercancel',fin);
+cv.addEventListener('wheel',e=>{e.preventDefault();if(bloqueado)return;tRad=lim(tRad*Math.exp(e.deltaY*.0012),4,95);tocar()},{passive:false});
+
+/* ===== entrada: nave de partículas → corazón → explosión ===== */
+const naveG=new THREE.Group();naveG.visible=false;scene.add(naveG);
+let naveBase;
+(function(){
+  const P=[],C=[],add=(x,y,z,k,bl)=>{P.push(x,y,z);if(bl)C.push(1,.88+R()*.1,.95);else C.push(1,.14+k*.45+R()*.2,.48+k*.35)};
+  for(let i=0;i<1900;i++){const u=R(),rr=.66*Math.pow(Math.sin(Math.PI*Math.pow(u,.6)),.75),a=R()*6.283;add(rr*Math.cos(a),rr*Math.sin(a)*.85,-2.3+u*5.5,u)}
+  const tri=(A,B,D,n,k)=>{for(let i=0;i<n;i++){let a=R(),b=R();if(a+b>1){a=1-a;b=1-b}
+    const x=A[0]+a*(B[0]-A[0])+b*(D[0]-A[0]),y=A[1]+a*(B[1]-A[1])+b*(D[1]-A[1])+gauss()*.03,z=A[2]+a*(B[2]-A[2])+b*(D[2]-A[2]);
+    add(x,y,z,k);if(x!==0)add(-x,y,z,k)}};
+  const w0=[.45,-.05,.6],w1=[2.9,-.1,-2.1],w2=[.45,-.05,-2.1];
+  tri(w0,w1,w2,800,.5);
+  for(let i=0;i<260;i++){const t=R(),x=w0[0]+t*(w1[0]-w0[0]),z=w0[2]+t*(w1[2]-w0[2]);add(x,-.07,z,1);add(-x,-.07,z,1)}
+  tri([0,.5,-1],[0,1.8,-2.3],[0,.5,-2.3],520,.6);
+  for(let i=0;i<180;i++){const u=R()*6.283,v=R()*3.1416;add(.26*Math.sin(v)*Math.cos(u),.5+.22*Math.cos(v),1.2+.5*Math.sin(v)*Math.sin(u),1,true)}
+  for(let i=0;i<300;i++){const a=R()*6.283,r=Math.sqrt(R())*.42;P.push(r*Math.cos(a),r*Math.sin(a)*.85,-2.4+gauss()*.12);C.push(1,.75,.92)}
+  naveBase=new Float32Array(P);
+  const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.BufferAttribute(new Float32Array(P),3));g.setAttribute('color',new THREE.BufferAttribute(new Float32Array(C),3));
+  naveG.add(new THREE.Points(g,new THREE.PointsMaterial({size:.15,map:disco,vertexColors:true,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending})));
+  naveG.add(halo(0xff5fa8,7,.3));
+})();
+/* estela / llama de la nave */
+const NF=1400,fP=new Float32Array(NF*3),fC=new Float32Array(NF*3),fV=new Float32Array(NF*3),fA=new Float32Array(NF).fill(9);
+let fi=0;const llama=puntos(fP,fC,.28);llama.frustumCulled=false;scene.add(llama);
+function emitir(pos,tan,esc,n){for(let i=0;i<n;i++){const j=fi=(fi+1)%NF;
+  fP[j*3]=pos.x+gauss()*.25*esc;fP[j*3+1]=pos.y+gauss()*.25*esc;fP[j*3+2]=pos.z+gauss()*.25*esc;
+  fV[j*3]=-tan.x*6+gauss()*1.2;fV[j*3+1]=-tan.y*6+gauss()*1.2;fV[j*3+2]=-tan.z*6+gauss()*1.2;fA[j]=0}}
+function pasarLlama(dt){for(let j=0;j<NF;j++){const a=fA[j];if(a>=1.3){fC[j*3]=fC[j*3+1]=fC[j*3+2]=0;continue}
+  fA[j]=a+dt;fP[j*3]+=fV[j*3]*dt;fP[j*3+1]+=fV[j*3+1]*dt;fP[j*3+2]+=fV[j*3+2]*dt;
+  const f=Math.max(0,1-a/1.3);fC[j*3]=f;fC[j*3+1]=.4*f;fC[j*3+2]=.75*f}
+  llama.geometry.attributes.position.needsUpdate=true;llama.geometry.attributes.color.needsUpdate=true}
+const S=new THREE.Vector3(),CC=new THREE.Vector3(),HH=new THREE.Vector3(),tmp=new THREE.Vector3(),tan=new THREE.Vector3();
+let fase=0,tCine=0,tImp=0,expl=null;const DUR=2.3,flash=$('flash');
+window.__preparar=()=>{bloqueado=true;th=tTh=.45;ph=tPh=1.3;rad=tRad=27;miraY=miraObj=5.5};
+window.__cine=()=>{fase=0;tCine=0};
+function boom(){
+  naveG.updateMatrixWorld(true);naveG.visible=false;
+  const N1=naveBase.length/3,N=N1+8000,pE=new Float32Array(N*3),cE=new Float32Array(N*3),vE=new Float32Array(N*3);
+  const aCam=new THREE.Vector3().copy(cam.position).sub(HH).normalize(),v=new THREE.Vector3();
+  for(let i=0;i<N;i++){
+    if(i<N1){v.set(naveBase[i*3],naveBase[i*3+1],naveBase[i*3+2]).applyMatrix4(naveG.matrixWorld);pE.set([v.x,v.y,v.z],i*3);v.sub(HH).normalize()}
+    else{pE.set([HH.x+gauss()*.6,HH.y+gauss()*.6,HH.z+gauss()*.6],i*3);v.set(gauss(),gauss(),gauss()).normalize();if(R()<.55)v.addScaledVector(aCam,1.1).normalize()}
+    v.x+=gauss()*.25;v.y+=gauss()*.25;v.z+=gauss()*.25;v.normalize().multiplyScalar(i<N1?5+R()*28:8+Math.pow(R(),.6)*62);
+    vE.set([v.x,v.y,v.z],i*3);
+    const q=R();if(q<.7)cE.set([1,.2+R()*.4,.55+R()*.3],i*3);else if(q<.9)cE.set([1,.8,.92],i*3);else cE.set([.9,.1,.6],i*3)}
+  const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.BufferAttribute(pE,3));geo.setAttribute('color',new THREE.BufferAttribute(cE,3));
+  const mat=new THREE.PointsMaterial({size:.42,map:disco,vertexColors:true,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending});
+  const pts=new THREE.Points(geo,mat);pts.frustumCulled=false;scene.add(pts);
+  const onda=halo(0xff7ac0,6,.9);onda.position.copy(HH);scene.add(onda);
+  expl={p:pE,v:vE,N,geo,mat,pts,onda};
+  fase=2;tImp=0;pulso=1;tiembla=reducido?0:.9;flash.style.opacity=reducido?.25:.6;window.__entrar&&window.__entrar()}
+function cineUpdate(dt){
+  if(fase===0&&bloqueado){tCine+=dt;
+    if(tCine>.1){cam.updateMatrixWorld();
+      const right=new THREE.Vector3().setFromMatrixColumn(cam.matrixWorld,0),up=new THREE.Vector3().setFromMatrixColumn(cam.matrixWorld,1),fwd=new THREE.Vector3().setFromMatrixColumn(cam.matrixWorld,2).negate();
+      HH.copy(corazon.position);
+      S.copy(cam.position).addScaledVector(fwd,11).addScaledVector(up,-.6);
+      CC.copy(S).lerp(HH,.5);
+      window.__v={right,up};naveG.visible=true;fase=1;tCine=0}}
+  else if(fase===1){tCine+=dt;tTh+=dt*.03;
+    const u=Math.min(1,tCine/DUR),e=Math.pow(u,1.3),a=(1-e)*(1-e),b=2*(1-e)*e,c=e*e;
+    naveG.position.set(S.x*a+CC.x*b+HH.x*c,S.y*a+CC.y*b+HH.y*c,S.z*a+CC.z*b+HH.z*c);
+    tan.set((CC.x-S.x)*2*(1-e)+(HH.x-CC.x)*2*e,(CC.y-S.y)*2*(1-e)+(HH.y-CC.y)*2*e,(CC.z-S.z)*2*(1-e)+(HH.z-CC.z)*2*e).normalize();
+    tmp.copy(naveG.position).add(tan);naveG.lookAt(tmp);
+    const esc=Math.max(.001,(1.2-.5*e)*Math.min(1,u/.07));naveG.scale.setScalar(esc);
+    emitir(tmp.copy(naveG.position).addScaledVector(tan,-2.5*esc),tan,esc,Math.round(dt*500));
+    if(u>=1)boom()}
+  else if(fase===2){tImp+=dt;
+    const q=expl.p,vv=expl.v,d=Math.max(0,1-1.15*dt);
+    for(let j=0;j<expl.N*3;j++){q[j]+=vv[j]*dt;vv[j]*=d}
+    expl.geo.attributes.position.needsUpdate=true;
+    expl.mat.opacity=Math.max(0,Math.min(1,(4.2-tImp)/2.6));
+    expl.onda.scale.setScalar(6+tImp*160);expl.onda.material.opacity=Math.max(0,.9-tImp*1.1);
+    flash.style.opacity=Math.max(0,(reducido?.25:.6)-tImp*1.1);
+    pulso*=Math.exp(-2.2*dt);tiembla*=Math.exp(-4.5*dt);
+    if(tImp>1.4)miraObj=9;
+    if(tImp>1.8&&bloqueado){bloqueado=false;ultimo=performance.now()}
+    if(tImp>4.4){scene.remove(expl.pts,expl.onda);expl.geo.dispose();expl=null;llama.visible=false;fase=3}}
+  if(fase>=1&&fase<3)pasarLlama(dt)}
+
+/* cartas */
+let nCarta=0,cartaAbierta=false,cierre=0;
+function abrirCarta(c){
+  c=c||CARTAS[nCarta++%CARTAS.length];
+  $('cuerpo').innerHTML=c.p.map(t=>`<p>${t}</p>`).join('');$('firma').textContent=c.f;
+  $('carta').classList.add('abierta');cartaAbierta=true;clearTimeout(cierre);cierre=setTimeout(cerrarCarta,14000)}
+function cerrarCarta(){$('carta').classList.remove('abierta');cartaAbierta=false;tocar()}
+$('cerrar').addEventListener('click',cerrarCarta);
+const v3=new THREE.Vector3();
+function tap(x,y){
+  if(cartaAbierta||bloqueado)return;
+  const foco=innerHeight/(2*Math.tan(cam.fov*Math.PI/360));
+  let mejor=null,mr=1;
+  const probar=(pos,radio,msg)=>{
+    v3.copy(pos).project(cam);if(v3.z>=1)return;
+    const r=Math.hypot(x-(v3.x+1)/2*innerWidth,y-(1-v3.y)/2*innerHeight)/radio;
+    if(r<mr){mr=r;mejor=msg}};
+  probar(corazon.position,Math.max(60,520/cam.position.length()*6),null);
+  const wp=new THREE.Vector3();
+  planetas.forEach(pl=>{pl.nodo.getWorldPosition(wp);
+    const d=cam.position.distanceTo(wp),px=Math.min(150,Math.max(38,pl.tam*2/d*foco));
+    probar(wp,px,FRASES_PLANETAS[pl.i])});
+  if(mr<1)abrirCarta(mejor||undefined)}
+
+function medir(){const w=innerWidth,h=innerHeight;renderer.setSize(w,h,false);cam.aspect=w/h;cam.fov=w/h<1?68:55;cam.updateProjectionMatrix()}
+addEventListener('resize',medir);medir();
+
+const reloj=new THREE.Clock();
+function bucle(){
+  requestAnimationFrame(bucle);
+  const dt=Math.min(reloj.getDelta(),.05),t=reloj.elapsedTime,ahora=performance.now();
+  const quieto=ahora-ultimo>2500&&!ptrs.size&&!bloqueado;
+  if(entro){ /* entrada: de cerca y a ras, hacia una vista más abierta */
+    const k=Math.min(1,(ahora-entro)/5200),e=1-Math.pow(1-k,3);
+    if(k<1&&!ptrs.size){tRad=7+e*19;tPh=1.52-e*.42}
+  }
+  if(quieto&&!reducido){ /* deriva suave: gira y respira entre horizonte y vista cenital */
+    tTh+=dt*.12+vel*.0;
+    tPh=1.12+Math.sin(t*.16)*.42;
+    tRad=lim(tRad,12,60);
+  }
+  cineUpdate(dt);
+  th+=(tTh-th)*Math.min(1,dt*6);ph+=(tPh-ph)*Math.min(1,dt*5);rad+=(tRad-rad)*Math.min(1,dt*5);
+  const sp=Math.sin(ph);
+  cam.position.set(rad*sp*Math.sin(th),rad*Math.cos(ph)+1.5,rad*sp*Math.cos(th));
+  if(tiembla>.01){cam.position.x+=gauss()*tiembla*.35;cam.position.y+=gauss()*tiembla*.35}
+  miraY+=(miraObj-miraY)*Math.min(1,dt*3);cam.lookAt(0,miraY,0);
+  galaxia.rotation.y=t*.035;sistema.rotation.y=t*.04;
+  orbitas.forEach(o=>o[0].rotation.y+=dt*o[1]);giros.forEach(o=>o[0].rotation.y+=dt*o[1]);
+  corazon.rotation.y=t*.7;
+  const lat=1+.06*Math.pow(Math.sin(t*2.4),2)+.03*Math.sin(t*5);
+  corazon.scale.setScalar(lat*(1+pulso*.9));luz.material.opacity=Math.min(1,.28+.12*Math.sin(t*2.4)+pulso*.5);
+  {const pa=lluvia.geometry.attributes.position,q=pa.array;
+   for(let i=0;i<LL;i++){const j=i*3;q[j+1]-=llV[i]*dt;q[j]+=Math.sin(t*.7+llF[i])*.35*dt;
+    if(q[j+1]<LLbot){q[j+1]=LLtop;const a=R()*6.283,r=Math.sqrt(R())*75;q[j]=Math.cos(a)*r;q[j+2]=Math.sin(a)*r}}
+   pa.needsUpdate=true}
+  moverRocas(dt);
+  /* flotación de los sprites */
+  galaxia.children.forEach((o,i)=>{if(o.isSprite)o.position.y+=Math.sin(t*1.2+i)*.0015});
+  renderer.render(scene,cam);
+}
+bucle();
+
+window.__entrar=()=>{ultimo=performance.now();
+  document.body.classList.add('dentro');
+  setTimeout(()=>$('pista').classList.add('ver'),2500);setTimeout(()=>$('pista').classList.remove('ver'),9500);
+  setInterval(()=>{if(!cartaAbierta&&performance.now()-ultimo>16000)abrirCarta()},4000)};
+if(pedido){window.__preparar();setTimeout(lanzar,300)}
+}
+
+const intro=$('intro');
+let listo=false,pedido=false,lanzado=false;
+setTimeout(()=>listo=true,reducido?500:6000);
+function lanzar(){if(lanzado||!window.__cine)return;lanzado=true;window.__cine()}
+function entrar(){if(!listo||pedido)return;pedido=true;iniciarMusica();intro.classList.add('abre');
+  if(window.__preparar)window.__preparar();
+  setTimeout(lanzar,200);setTimeout(()=>intro.classList.add('fuera'),1300)}
+intro.addEventListener('click',entrar);
+intro.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' ')entrar()});
+/* música */
+const audio=MUSICA?new Audio(MUSICA):null,btnM=$('musicaBtn');
+if(audio){audio.loop=true;audio.volume=0;audio.addEventListener('error',()=>{btnM.hidden=true})}else btnM.hidden=true;
+let sonando=true,fadeM=0;
+function fadeA(v,ms){clearInterval(fadeM);const v0=audio.volume,t0=performance.now();
+  fadeM=setInterval(()=>{const k=Math.min(1,(performance.now()-t0)/ms);audio.volume=v0+(v-v0)*k;if(k>=1){clearInterval(fadeM);if(v===0)audio.pause()}},50)}
+function iniciarMusica(){if(audio)audio.play().then(()=>fadeA(.7,3500)).catch(()=>{})}
+btnM.addEventListener('click',()=>{if(!audio)return;sonando=!sonando;
+  if(sonando){audio.play().catch(()=>{});fadeA(.7,600)}else fadeA(0,400);
+  btnM.textContent=sonando?'🔊':'🔇';btnM.setAttribute('aria-pressed',String(!sonando));btnM.setAttribute('aria-label',sonando?'Silenciar música':'Activar música')});
+/* partículas dentro del cuadro */
+(function(){
+  const cv=$('cp'),x=cv.getContext('2d'),box=$('cuadro'),dpr=Math.min(devicePixelRatio,2);let W,H;
+  function med(){W=box.clientWidth;H=box.clientHeight;cv.width=W*dpr;cv.height=H*dpr;x.setTransform(dpr,0,0,dpr,0,0)}
+  med();addEventListener('resize',med);
+  const ps=Array.from({length:90},()=>({x:R()*W,y:R()*H,r:.6+R()*1.8,v:6+R()*16,f:R()*6.28,s:.6+R()*1.6,k:R()}));
+  const run=Array.from({length:50},()=>({s:R(),v:.03+R()*.05}));
+  let ult=0;
+  function dib(t){
+    if(intro.classList.contains('fuera'))return;requestAnimationFrame(dib);
+    const dt=Math.min(.05,(t-ult)/1000||.016);ult=t;
+    x.clearRect(0,0,W,H);x.globalCompositeOperation='lighter';
+    ps.forEach(p=>{p.y-=p.v*dt;if(p.y<-4){p.y=H+4;p.x=R()*W}
+      const a=.3+.7*Math.abs(Math.sin(t*.001*p.s+p.f)),c=`rgba(255,${120+p.k*100|0},${190+p.k*50|0},`;
+      x.fillStyle=c+a*.18+')';x.beginPath();x.arc(p.x,p.y,p.r*3.2,0,6.283);x.fill();
+      x.fillStyle=c+a+')';x.beginPath();x.arc(p.x,p.y,p.r,0,6.283);x.fill()});
+    const per=2*(W+H);
+    run.forEach(r=>{r.s=(r.s+r.v*dt*.5)%1;let d=r.s*per,px,py;
+      if(d<W){px=d;py=0}else if((d-=W)<H){px=W;py=d}else if((d-=H)<W){px=W-d;py=H}else{d-=W;px=0;py=H-d}
+      x.fillStyle='rgba(255,200,230,.9)';x.beginPath();x.arc(px,py,1.5,0,6.283);x.fill();
+      x.fillStyle='rgba(255,45,143,.22)';x.beginPath();x.arc(px,py,5,0,6.283);x.fill()});
+  }
+  requestAnimationFrame(dib);
+})();
+const carga=Promise.race([Promise.all([document.fonts.load('700 52px Quicksand'),document.fonts.load('italic 600 24px "Cormorant Garamond"')]),new Promise(r=>setTimeout(r,2500))]);
+carga.catch(()=>{}).then(arrancar);
+</script>
+</body>
+</html>
